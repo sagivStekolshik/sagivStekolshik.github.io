@@ -5,28 +5,31 @@
     var app = new Vue({
         el: '#app',
         data: {
-            subreddit: "cats",
+            subreddit: "aww",
             subredditObjArr: []
         },
         methods: {
             // a get function using redditjs api to get 9 new images from the selected subreddit
             getSubredditImg() {
-                reddit.hot(this.subreddit).limit(9).fetch(res=> {
+                reddit.hot(this.subreddit).limit(9).fetch(res => {
                     // res contains JSON parsed response from Reddit
                     app.subredditObjArr = res.data.children.map((obj) => {
+                        if(obj.data.url.includes("imgur")){
+                            obj.data.url = fixImgurURL(obj.data.url);
+                        }
                         return {
                             id: obj.data.id,
                             title: obj.data.title,
                             imgURL: obj.data.url
                         }
-                    }, err=>{
+                    }, err => {
                         console.log("err");
                     });
 
                 });
             },
-            debouncedSubredditImgGetter(){
-              debounce(this.getSubredditImg(),500,false);
+            debouncedSubredditImgGetter() {
+                debounce(this.getSubredditImg(), 500, false);
             }
 
         },
@@ -56,5 +59,19 @@
                 func.apply(context, args);
         };
     };
+
+    function fixImgurURL(imgurURL) {
+        console.log("URL",imgurURL);
+        let URLRegexForPictureWithFileExtention = new RegExp('((http(s?):\/\/)?imgur\.com\/[a-zA-Z0-9]{6,8})(?!\.jpg|\.gif|\.gifv|\.png)(?:[^a-zA-Z0-9]|$)');
+        if(URLRegexForPictureWithFileExtention.test(imgurURL)){
+            console.log("add .gif");
+            return imgurURL.concat(".gif");
+        }
+        if(imgurURL.endsWith(".gifv")){
+            console.log("remove v from gifv");
+            return imgurURL.slice(0,-1);
+        }
+        return imgurURL;
+    }
 
 })();

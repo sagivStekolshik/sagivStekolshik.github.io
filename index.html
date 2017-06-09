@@ -21,7 +21,7 @@
     <div id="app" layout="column center-center">
             <div>
                 <label>Subreddit</label>
-                <input v-model="subreddit" @keyup="debouncedSubredditImgGetter()">
+                <input v-model.trim="subreddit" @keyup="debouncedSubredditImgGetter()">
             </div>
       <div layout="row center-center">
           <img class="redditImg" v-for="item in subredditObjArr" :key="item.id" :src="item.imgURL" :alt="item.title" self="size-1of3">
