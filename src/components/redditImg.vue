@@ -35,8 +35,8 @@
     }
 
     .redditImg {
-        width: 25vw;
-        height: 255px;
+        width: 28vmax;
+        height: 28vmax;
         margin: 20px;
         position: relative;
     }

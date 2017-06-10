@@ -12,19 +12,26 @@
             }
         },
         methods: {
-            emitSubredditChange(event){
+            emitSubredditChange(event) {
                 this.redditText = event.target.value;
-                this.$emit("subredditChange",this.redditText);
+                this.$emit("subredditChange", this.redditText);
             }
         }
     }
+
 </script>
 
 <style>
-    #redditInput{
+    #redditInput {
         display: block;
         margin: 30px;
+        background-color: transparent;
         padding: 10px 10px 0 10px;
-        font-size: 20px;
+        font-size: 30px;
+        border: none;
+        border-bottom: 3px solid orangered;
+        outline: none;
+        color: #aaa
     }
+
 </style>
