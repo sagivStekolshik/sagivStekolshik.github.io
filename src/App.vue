@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <reddit-input :subreddit="subreddit" @subredditChange="debouncedSubredditImgGetter($event)"></reddit-input>
+    <div layout="row center-spread">
+        <reddit-input :subreddit="subreddit" @subredditChange="debouncedSubredditImgGetter($event)"></reddit-input>
+        <reddit-pager></reddit-pager>
+    </div>
     <div flexWrap layout="row center-spread">
         <reddit-image v-for="item in subredditObjArr" :reddit-object="item"></reddit-image>
     </div>
@@ -8,8 +11,10 @@
 </template>
 
 <script>
-    import input from "./components/redditInput.vue";
+    import redditInput from "./components/redditInput.vue";
     import redditimg from "./components/redditImg.vue";
+    import redditPager from "./components/redditPager.vue"
+
     import debounce from "./js/debounce";
     import fixImgurURL from "./js/fixImgurURL";
 
@@ -26,8 +31,9 @@
             }
         },
         components: {
-            "reddit-input": input,
-            "reddit-image": redditimg
+            "reddit-input": redditInput,
+            "reddit-image": redditimg,
+            "reddit-pager": redditPager
         },
         methods: {
             // a get function using redditjs api to get 9 new images from the selected subreddit
