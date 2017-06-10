@@ -1,0 +1,48 @@
+<template>
+    <div class="redditImg">
+       <h3>{{ redditObject.title }}</h3>
+        <img :src="redditObject.imgURL" :alt="redditObject.title">
+    </div>
+</template>
+
+<script>
+    export default {
+        props: ["redditObject"],
+        data() {
+            return {}
+        }
+    }
+
+</script>
+
+<style>
+    .redditImg h3 {
+        background-color: orangered;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: inherit;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 300ms ease-out;
+    }
+
+    .redditImg img {
+        width: inherit;
+        height: inherit;
+        border: 5px black solid;
+        box-shadow: 0 15px 15px -10px rgba(0,0,0,0.5);
+    }
+
+    .redditImg {
+        width: 25vw;
+        height: 255px;
+        margin: 20px;
+        position: relative;
+    }
+
+    .redditImg:hover > h3 {
+        opacity: 0.9;
+    }
+
+</style>

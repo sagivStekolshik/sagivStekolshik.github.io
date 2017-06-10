@@ -3,13 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>test</title>
+    <title>brackets</title>
     <!--    Font-->
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
     <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
-    <!--    custom CSS-->
-    <link rel="stylesheet" href="dist/css/style.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flex-layout-attribute/1.0.3/css/flex-layout-attribute.min.css">
     <!--    vue js-->
     <script src="https://unpkg.com/vue"></script>
     <script src="https://cdn.jsdelivr.net/npm/reddit.js@0.1.4/reddit.min.js"></script>
@@ -18,17 +16,10 @@
 </head>
 
 <body>
-    <div id="app" layout="column center-center">
-            <div>
-                <label>Subreddit</label>
-                <input v-model.trim="subreddit" @keyup="debouncedSubredditImgGetter()">
-            </div>
-      <div layout="row center-center">
-          <img class="redditImg" v-for="item in subredditObjArr" :key="item.id" :src="item.imgURL" :alt="item.title" self="size-1of3">
-      </div>
+    <div id="app">
     </div>
     <!--   main script loading-->
-    <script src="dist/js/site.js"></script>
+    <script src="dist/build.js"></script>
 </body>
 
 </html>
