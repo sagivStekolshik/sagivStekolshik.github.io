@@ -24,7 +24,7 @@
         name: 'app',
         data() {
             return {
-                subreddit: "cats",
+                subreddit: undefined,
                 subredditObjArr: [],
                 paging: {
                     before: null,
