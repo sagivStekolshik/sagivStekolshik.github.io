@@ -1,6 +1,6 @@
 <template>
     <div id="noSubredditWrapper" layout="column center-center">
-        <h1>No such subreddit</h1>
+        <h1>No results for your search</h1>
         <img src="https://media.giphy.com/media/kcAz4pqDIN0Qg/giphy.gif" alt="Empty canister gif">
     </div>
 </template>
@@ -20,9 +20,11 @@
         padding: 10px;
     }
 
-    h1{
+    #noSubredditWrapper h1{
         color: #ccc;
-        background-color: rgba(0,0,0,0.5);
+        background-color: rgba(18, 61, 135,0.7);
+        padding: 20px 20px;
+        border-radius: 20px;
     }
 
     #noSubredditWrapper img {

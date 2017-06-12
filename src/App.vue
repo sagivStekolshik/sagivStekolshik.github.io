@@ -2,23 +2,28 @@
   <div id="app">
     <div layout="row center-left">
         <reddit-input :subreddit="subreddit" @subredditChange="debouncedSubredditGetter($event)"></reddit-input>
+        <reddit-paging :page="currentPage"
+                        :maximum-objects="subredditObjArr.length"
+                        @pageChange="currentPage = $event"
+                        @getMorePages="addSubredditPages($event)"></reddit-paging>
     </div>
     <div layout="row center-center">
         <no-subreddit-messege v-show="noSubreddit"></no-subreddit-messege>
     </div>
     <div flexWrap layout="row center-spread">
-        <reddit-image v-for="item in subredditObjArr" :reddit-object="item"></reddit-image>
+        <reddit-image v-for="item in minifiedSubredditObjArray" :reddit-object="item"></reddit-image>
     </div>
   </div>
 </template>
 
 <script>
     import redditInput from "./components/redditInput.vue";
-    import redditimg from "./components/redditImg.vue";
+    import redditImg from "./components/redditImg.vue";
+    import pager from "./components/redditPager.vue";
     import noSubreddit from "./components/noSubreddit.vue";
 
     import debounce from "./js/debounce";
-    import fixImgurURL from "./js/fixImgurURL";
+    import convertRedditObj from "./js/sortRedditObj";
 
     export default {
         name: 'app',
@@ -29,63 +34,50 @@
                 paging: {
                     before: undefined,
                     after: undefined,
-                    currentPage: 1
-                }
-            }
-        },
-        computed: {
-            noSubreddit: function() {
-                if(typeof this.paging.before === "undefined" && typeof this.paging.after === "undefined")
-                    return false;
-                return !this.subredditObjArr.length
+                },
+                currentPage: 1
             }
         },
         // components
         components: {
             "reddit-input": redditInput,
-            "reddit-image": redditimg,
-            "no-subreddit-messege": noSubreddit
+            "reddit-image": redditImg,
+            "no-subreddit-messege": noSubreddit,
+            "reddit-paging": pager
+        },
+        computed: {
+            // show no subreddit only when no subreddit are selected
+            noSubreddit() {
+                if (typeof this.paging.before === "undefined" && typeof this.paging.after === "undefined")
+                    return false;
+                return !this.subredditObjArr.length
+            },
+            minifiedSubredditObjArray() {
+                // show only 9 reddit objects and not all
+                //if not enough enterys do nothing
+                if (this.subredditObjArr.length === 0 || this.subredditObjArr.length < 9)
+                    return this.subredditObjArr
+                return this.subredditObjArr.slice(this.currentPage * 9 - 9, this.currentPage * 9)
+            }
+
         },
         methods: {
             // a get function using redditjs api to get 9 new images from the selected subreddit
-            getSubredditImg() {
+            getSubreddit() {
                 //regex to find if the url ends with an image file extention
-                let regexURLVerificationOfImage = /(.jpg|.gif|.png)$/,
-                    searchQuery = this.subreddit === "" ? undefined : this.subreddit,
-                    contex = this;
-                reddit.hot(searchQuery).after().limit(9 * 7).fetch(res => {
+                let searchQuery = this.subreddit === "" ? undefined : this.subreddit,
+                    context = this;
+                reddit.hot(searchQuery).limit(9 * 7).fetch(res => {
                     // if the subreddit dosn't exists it will return response with 404 field
-                    if (res.error != 404) {
-                        //get paging after and before
-                        [contex.paging.before,contex.paging.after] = [res.data.before,res.data.after];
-                        // res contains JSON parsed response from Reddit
-                        contex.subredditObjArr = res.data.children
-                            //map the recived obj to a manageble redditObj with correct urls
-                            .map((obj) => {
-                                    // sort image url from imgur and try to fix them
-                                    if (obj.data.url.includes("imgur")) {
-                                        obj.data.url = fixImgurURL(obj.data.url);
-                                    }
-                                    // map the array to a menageble object
-                                    return {
-                                        id: obj.data.id,
-                                        title: obj.data.title,
-                                        imgURL: obj.data.url
-                                    }
-                                }
-
-                            )
-                            //weed out stray urls that dosn't show pictures
-                            .filter((redditObj) => {
-                                if (regexURLVerificationOfImage.test(redditObj.imgURL))
-                                    return true;
-                                return false;
-                            })
-                            // return only the 9 first items
-                            .slice(0, 9);
-                    } else {
-                        contex.subredditObjArr = [];
+                    //and we will reset the search and terminate function
+                    if (res.error === 404) {
+                        context.subredditObjArr = [];
+                        return
                     }
+                    //get paging after and before
+                    [context.paging.before, context.paging.after] = [res.data.before, res.data.after];
+                    // res contains JSON parsed response from Reddit
+                    context.subredditObjArr = convertRedditObj(res.data.children);
                 }, err => {
                     //incase of error print it and do nothing
                     console.error("err", err);
@@ -95,11 +87,28 @@
             debouncedSubredditGetter(subreddit) {
                 this.subreddit = subreddit;
                 // when input changed get the next reddit obj
-                debounce(this.getSubredditImg(), 500, false);
+                debounce(this.getSubreddit(), 500, false);
+            },
+            addSubredditPages(amount) {
+                //adding to the reddit object array
+                let searchQuery = this.subreddit === "" ? undefined : this.subreddit,
+                    context = this;
+                reddit.hot(searchQuery).after(this.paging.after).limit(9 *2+3).fetch(res => {
+                    if (res.error === 404) {
+                        console.error("adding reddit object faild, invalid sqerch query");
+                        return
+                    }
+                    context.subredditObjArr = context.subredditObjArr.concat(convertRedditObj(res.data.children));
+                });
+            }
+        },
+        watch: {
+            subreddit() {
+                this.currentPage = 1;
             }
         },
         created() {
-            return this.getSubredditImg();
+            return this.getSubreddit();
         }
     }
 
