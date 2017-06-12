@@ -3,7 +3,7 @@
     <div layout="row center-left">
         <reddit-input :subreddit="subreddit" @subredditChange="debouncedSubredditGetter($event)"></reddit-input>
     </div>
-    <div v-cloak layout="row center-center">
+    <div layout="row center-center">
         <no-subreddit-messege v-show="noSubreddit"></no-subreddit-messege>
     </div>
     <div flexWrap layout="row center-spread">
@@ -24,7 +24,7 @@
         name: 'app',
         data() {
             return {
-                subreddit: undefined,
+                subreddit: "cats",
                 subredditObjArr: [],
                 paging: {
                     before: null,
@@ -118,10 +118,6 @@
 
     [flexWrap] {
         flex-wrap: wrap;
-    }
-
-    [v-cloak] {
-        display: none;
     }
 
 </style>
