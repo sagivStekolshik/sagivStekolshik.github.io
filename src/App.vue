@@ -27,15 +27,15 @@
                 subreddit: undefined,
                 subredditObjArr: [],
                 paging: {
-                    before: null,
-                    after: null,
+                    before: undefined,
+                    after: undefined,
                     currentPage: 1
                 }
             }
         },
         computed: {
             noSubreddit: function() {
-                if(typeof this.paging.before === "object" && typeof this.paging.after === "object")
+                if(typeof this.paging.before === "undefined" && typeof this.paging.after === "undefined")
                     return false;
                 return !this.subredditObjArr.length
             }
@@ -53,11 +53,11 @@
                 let regexURLVerificationOfImage = /(.jpg|.gif|.png)$/,
                     searchQuery = this.subreddit === "" ? undefined : this.subreddit,
                     contex = this;
-                reddit.hot(searchQuery).limit(9 * 7).fetch(res => {
+                reddit.hot(searchQuery).after().limit(9 * 7).fetch(res => {
                     // if the subreddit dosn't exists it will return response with 404 field
                     if (res.error != 404) {
                         //get paging after and before
-                        [this.paging.before,this.paging.after] = [res.data.before,res.data.after];
+                        [contex.paging.before,contex.paging.after] = [res.data.before,res.data.after];
                         // res contains JSON parsed response from Reddit
                         contex.subredditObjArr = res.data.children
                             //map the recived obj to a manageble redditObj with correct urls

@@ -29,22 +29,26 @@
         padding: 10px 10px 0 40px;
         font-size: 30px;
         border: none;
-        border-bottom: 3px solid orangered;
+        border-bottom: 3px solid #123d87;
         outline: none;
-        color: #aaa;
         margin: 0;
         border-bottom-left-radius: 10%;
         border-bottom-right-radius: 10%;
+        color: #123d87;
+    }
 
+    #redditInput:placeholder {
+        color: #535a66;
     }
 
     #redditInputWrapper{
         position: relative;
         margin-left: 50px;
+        color: #123d87;
     }
 
-    i{
-        color: #aaa;
+    #redditInputWrapper i{
+        color: #123d87;
         font-size: 30px;
         position: absolute;
         left: 0;
