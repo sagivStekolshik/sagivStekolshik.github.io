@@ -1,8 +1,10 @@
 <template>
   <div id="app">
     <div layout="row center-left">
-        <reddit-input :subreddit="subreddit" @subredditChange="debouncedSubredditImgGetter($event)"></reddit-input>
-<!--        <reddit-pager></reddit-pager>-->
+        <reddit-input :subreddit="subreddit" @subredditChange="debouncedSubredditGetter($event)"></reddit-input>
+    </div>
+    <div v-cloak layout="row center-center">
+        <no-subreddit-messege v-show="noSubreddit"></no-subreddit-messege>
     </div>
     <div flexWrap layout="row center-spread">
         <reddit-image v-for="item in subredditObjArr" :reddit-object="item"></reddit-image>
@@ -13,7 +15,7 @@
 <script>
     import redditInput from "./components/redditInput.vue";
     import redditimg from "./components/redditImg.vue";
-    import redditPager from "./components/redditPager.vue"
+    import noSubreddit from "./components/noSubreddit.vue";
 
     import debounce from "./js/debounce";
     import fixImgurURL from "./js/fixImgurURL";
@@ -22,7 +24,7 @@
         name: 'app',
         data() {
             return {
-                subreddit: "cats",
+                subreddit: undefined,
                 subredditObjArr: [],
                 paging: {
                     before: null,
@@ -31,31 +33,40 @@
                 }
             }
         },
+        computed: {
+            noSubreddit: function() {
+                if(typeof this.paging.before === "object" && typeof this.paging.after === "object")
+                    return false;
+                return !this.subredditObjArr.length
+            }
+        },
+        // components
         components: {
             "reddit-input": redditInput,
             "reddit-image": redditimg,
-            "reddit-pager": redditPager
-        },
-        computed: {
-            reducedSubredditObjArr() {
-                console.log("hi from comp");
-                return this.subredditObjArr.slice(this.paging * 9 - 9, this.paging * 9 - 1);
-            }
+            "no-subreddit-messege": noSubreddit
         },
         methods: {
             // a get function using redditjs api to get 9 new images from the selected subreddit
             getSubredditImg() {
+                //regex to find if the url ends with an image file extention
                 let regexURLVerificationOfImage = /(.jpg|.gif|.png)$/,
+                    searchQuery = this.subreddit === "" ? undefined : this.subreddit,
                     contex = this;
-                reddit.hot(this.subreddit).limit(9 * 7).fetch(res => {
-                    if (res.data.children) {
+                reddit.hot(searchQuery).limit(9 * 7).fetch(res => {
+                    // if the subreddit dosn't exists it will return response with 404 field
+                    if (res.error != 404) {
+                        //get paging after and before
+                        [this.paging.before,this.paging.after] = [res.data.before,res.data.after];
                         // res contains JSON parsed response from Reddit
                         contex.subredditObjArr = res.data.children
-                        //map the recived obj to a manageble redditObj with correct urls
+                            //map the recived obj to a manageble redditObj with correct urls
                             .map((obj) => {
+                                    // sort image url from imgur and try to fix them
                                     if (obj.data.url.includes("imgur")) {
                                         obj.data.url = fixImgurURL(obj.data.url);
                                     }
+                                    // map the array to a menageble object
                                     return {
                                         id: obj.data.id,
                                         title: obj.data.title,
@@ -64,24 +75,27 @@
                                 }
 
                             )
-                        //weed out stray urls that dosn't show pictures
+                            //weed out stray urls that dosn't show pictures
                             .filter((redditObj) => {
-                                if(regexURLVerificationOfImage.test(redditObj.imgURL))
+                                if (regexURLVerificationOfImage.test(redditObj.imgURL))
                                     return true;
                                 return false;
-                            }).slice(0, 9);
+                            })
+                            // return only the 9 first items
+                            .slice(0, 9);
                     } else {
                         contex.subredditObjArr = [];
                     }
                 }, err => {
-                    console.log("err");
-                })
+                    //incase of error print it and do nothing
+                    console.error("err", err);
+                });
             },
-            debouncedSubredditImgGetter(subreddit) {
-                if (subreddit.length !== 0) {
-                    this.subreddit = subreddit;
-                    debounce(this.getSubredditImg(), 300, false);
-                }
+            // debounce the subredditgetter to not flood the api and annoy the client
+            debouncedSubredditGetter(subreddit) {
+                this.subreddit = subreddit;
+                // when input changed get the next reddit obj
+                debounce(this.getSubredditImg(), 500, false);
             }
         },
         created() {
@@ -104,6 +118,10 @@
 
     [flexWrap] {
         flex-wrap: wrap;
+    }
+
+    [v-cloak] {
+        display: none;
     }
 
 </style>

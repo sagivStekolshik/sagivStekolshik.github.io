@@ -1,7 +1,7 @@
 <template>
    <div id="redditInputWrapper">
        <i class="material-icons">search</i>
-       <input id="redditInput" type="text" :value="subreddit" @input="emitSubredditChange" placeholder="Subreddit">
+       <input id="redditInput" type="text" :value="subreddit" @input="emitSubredditChange" placeholder="Type Subreddit">
    </div>
 </template>
 
