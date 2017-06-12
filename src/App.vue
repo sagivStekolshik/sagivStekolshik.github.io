@@ -3,6 +3,7 @@
     <div layout="row center-left">
         <reddit-input :subreddit="subreddit" @subredditChange="debouncedSubredditGetter($event)"></reddit-input>
         <reddit-paging :page="currentPage"
+                       v-show="!noSubreddit"
                         :maximum-objects="subredditObjArr.length"
                         @pageChange="currentPage = $event"
                         @getMorePages="addSubredditPages($event)"></reddit-paging>
