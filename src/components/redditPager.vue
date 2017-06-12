@@ -1,7 +1,7 @@
 <template>
     <div layout="row center-spread">
-        <button>back</button>
-        <button>after</button>
+        <button >back</button>
+        <button>next</button>
     </div>
 </template>
 

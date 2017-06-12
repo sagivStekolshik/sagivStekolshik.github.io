@@ -1,6 +1,8 @@
 <template>
-    <input id="redditInput" type="text" :value="subreddit" @input="emitSubredditChange">
-    <label for="redditInput">subreddit</label>
+   <div id="redditInputWrapper">
+       <i class="material-icons">search</i>
+       <input id="redditInput" type="text" :value="subreddit" @input="emitSubredditChange" placeholder="Subreddit">
+   </div>
 </template>
 
 <script>
@@ -23,14 +25,34 @@
 
 <style>
     #redditInput {
-        display: block;
-        margin: 30px;
         background-color: transparent;
-        padding: 10px 10px 0 10px;
+        padding: 10px 10px 0 40px;
         font-size: 30px;
         border: none;
         border-bottom: 3px solid orangered;
         outline: none;
-        color: #aaa
+        color: #aaa;
+        margin: 0;
+        border-bottom-left-radius: 10%;
+        border-bottom-right-radius: 10%;
+
     }
+
+    #redditInputWrapper{
+        position: relative;
+        margin-left: 50px;
+    }
+
+    i{
+        color: #aaa;
+        font-size: 30px;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        pointer-events: none;
+        padding: 7px;
+    }
+
+
+
 </style>
