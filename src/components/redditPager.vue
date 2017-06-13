@@ -94,6 +94,7 @@
 
     #pagerWrapper i {
         user-select: none;
+        cursor: pointer;
     }
 
     #pagerWrapper span {
