@@ -4,14 +4,14 @@
     <div layout="row center-left">
         <reddit-input :subreddit="subreddit" @subredditChange="debouncedSubredditGetter($event)"></reddit-input>
         <reddit-paging :page="currentPage"
-                       v-show="!noSubreddit"
+                       v-show="subredditObjArr.length"
                         :maximum-objects="subredditObjArr.length"
                         @pageChange="currentPage = $event"
                         @getMorePages="addSubredditPages"></reddit-paging>
     </div>
 <!--    paging section/component-->
     <div layout="row center-center">
-        <no-subreddit-messege v-show="noSubreddit"></no-subreddit-messege>
+        <no-subreddit-messege v-if="noSubreddit"></no-subreddit-messege>
     </div>
 <!--    gallery section/component-->
     <div flexWrap layout="row center-spread">
