@@ -1,5 +1,5 @@
 <template>
-    <div layout="row center-center" v-show="showPaging" id="pagerWrapper" >
+    <div layout="row center-center" id="pagerWrapper" >
         <div>
             <i class="material-icons" clickable @click="jumpToPage(1)">first_page</i>
         </div>
