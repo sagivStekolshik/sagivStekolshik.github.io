@@ -7,7 +7,7 @@
                        v-show="!noSubreddit"
                         :maximum-objects="subredditObjArr.length"
                         @pageChange="currentPage = $event"
-                        @getMorePages="addSubredditPages($event)"></reddit-paging>
+                        @getMorePages="addSubredditPages"></reddit-paging>
     </div>
 <!--    paging section/component-->
     <div layout="row center-center">
@@ -38,6 +38,7 @@
                 paging: {
                     before: undefined,
                     after: undefined,
+                    endOfPages: false
                 },
                 currentPage: 1
             }
@@ -55,6 +56,7 @@
                 if (typeof this.paging.before === "undefined" && typeof this.paging.after === "undefined")
                     return false;
                 return !this.subredditObjArr.length
+
             },
             minifiedSubredditObjArray() {
                 // show only 9 reddit objects and not all
@@ -93,15 +95,18 @@
                 // when input changed get the next reddit obj
                 debounce(this.getSubreddit(), 500, false);
             },
-            addSubredditPages(amount) {
+            addSubredditPages() {
                 //adding to the reddit object array
                 let searchQuery = this.subreddit === "" ? undefined : this.subreddit,
                     context = this;
-                reddit.hot(searchQuery).after(this.paging.after).limit(9 *2+3).fetch(res => {
+                reddit.hot(searchQuery).after(this.paging.after).limit(9 *3).fetch(res => {
                     if (res.error === 404) {
                         console.error("adding reddit object faild, invalid sqerch query");
                         return
                     }
+                    //check if the paging is over by compering the paging after field
+                    if(context.paging.after === res.data.after)
+                        console.log("same after");
                     [context.paging.before, context.paging.after] = [res.data.before, res.data.after];
                     context.subredditObjArr = context.subredditObjArr.concat(convertRedditObj(res.data.children));
                 });
@@ -110,6 +115,7 @@
         watch: {
             subreddit() {
                 this.currentPage = 1;
+                this.paging.endOfPages = false;
             }
         },
         created() {
