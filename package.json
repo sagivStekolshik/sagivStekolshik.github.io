@@ -1,7 +1,7 @@
 {
     "name": "wixproject",
     "version": "1.0.0",
-    "description": "Website that display in a gallery form imeges from various subreddits thredes, using vuejs and Reddit.js api\r for more inforamtion about vue.js go to https://vuejs.org/",
+    "description": "Website that display in a gallery form imeges from various subreddits thredes, using vuejs and Reddit.js api",
     "main": "index.js",
     "dependencies": {},
     "devDependencies": {
@@ -18,8 +18,7 @@
         "webpack": "^2.6.1"
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "cross-env NODE_ENV=production webpack --progress --hide-modules --watch"
+        "build": "cross-env NODE_ENV='production' webpack --progress --hide-modules --watch"
     },
     "repository": {
         "type": "git",
@@ -30,5 +29,5 @@
     "bugs": {
         "url": "https://github.com/sagivStekolshik/sagivStekolshik.github.io/issues"
     },
-    "homepage": "https://github.com/sagivStekolshik/sagivStekolshik.github.io#readme"
+    "homepage": "sagivStekolshik.github.io"
 }
