@@ -1,10 +1,22 @@
 <template>
-    <div layout="row center-spread">
-        <button @click="emitBackPage">back</button>
-        <span v-for="i in UIpagingCounter"
-                @click="jumpToPage(i)"
-                :class="{active: i === page}">{{i}}</span>
-        <button @click="emitNextPage">next</button>
+    <div layout="row center-center">
+        <div>
+            <i class="material-icons" @click="jumpToPage(1)">first_page</i>
+        </div>
+        <div>
+            <i class="material-icons" clickable @click="emitBackPage">chevron_left</i>
+        </div>
+
+        <div id="pagerWrapper">
+            <span v-for="i in UIpagingCounter"
+                    @click="jumpToPage(i)"
+                    :class="{active: i === page}"
+                    :style="{fontSize: 1-(Math.abs(page-i)/10) + 'em'}">{{i}}</span>
+        </div>
+
+        <div>
+            <i class="material-icons" clickable @click="emitNextPage">chevron_right</i>
+        </div>
     </div>
 </template>
 
@@ -29,7 +41,7 @@
             },
             jumpToPage(page) {
                 //jump to selected page
-                if (page > 0 && page < Math.ceil(this.maximumObjects / 9))
+                if (page > 0 && page < Math.ceil(this.maximumObjects / 9) && typeof page === "number")
                     this.$emit("pageChange", page)
             }
 
@@ -42,7 +54,7 @@
                 for (let i = this.page - 1; i >= (this.page - 2) && i > 0; i--) {
                     arr.unshift(i);
                 }
-                for(let i = this.page + 1; i <= (this.page + 2) && i < Math.ceil(this.maximumObjects / 9) ; i++ ){
+                for (let i = this.page + 1; i <= (this.page + 2) && i < Math.ceil(this.maximumObjects / 9); i++) {
                     arr.push(i)
                 }
                 return arr;
@@ -63,14 +75,38 @@
 </script>
 
 <style>
-    span {
-        cursor: pointer;
-        margin: 0 10px;
+    #pagerWrapper{
+        margin: 0 1em;
+        font-size: 20px;
+    }
+
+    #pagerWrapper span {
+        margin: 0 0.7em;
         transition: all 500ms ease-in;
+
     }
 
-    .active{
+    .active {
         color: blue;
+        position: relative;
     }
 
+    [clickable]{
+        cursor: pointer
+    }
+
+    .active::after{
+        content: "";
+        width: 2em;
+        height: 2em;
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+
+        background-image: url(https://photoshop-kopona.com/uploads/posts/2017-06/thumbs/1496823008_decorative-frame-3.png);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
 </style>

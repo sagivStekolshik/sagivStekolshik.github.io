@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+<!--   input section/component-->
     <div layout="row center-left">
         <reddit-input :subreddit="subreddit" @subredditChange="debouncedSubredditGetter($event)"></reddit-input>
         <reddit-paging :page="currentPage"
@@ -8,9 +9,11 @@
                         @pageChange="currentPage = $event"
                         @getMorePages="addSubredditPages($event)"></reddit-paging>
     </div>
+<!--    paging section/component-->
     <div layout="row center-center">
         <no-subreddit-messege v-show="noSubreddit"></no-subreddit-messege>
     </div>
+<!--    gallery section/component-->
     <div flexWrap layout="row center-spread">
         <reddit-image v-for="item in minifiedSubredditObjArray" :reddit-object="item"></reddit-image>
     </div>
@@ -99,6 +102,7 @@
                         console.error("adding reddit object faild, invalid sqerch query");
                         return
                     }
+                    [context.paging.before, context.paging.after] = [res.data.before, res.data.after];
                     context.subredditObjArr = context.subredditObjArr.concat(convertRedditObj(res.data.children));
                 });
             }
